@@ -15,15 +15,9 @@ u
 Edustin/src/main/kotlin/io/dustin/api/usercase/mugi/ReadMugiUseCase.kt,9/e/9ecfc51cc998c317d509f94f394dd6e01b66a437
 q
 Adustin/src/main/kotlin/io/dustin/common/utils/ColumnCheckUtils.kt,0/8/086ee2f2f07518e63dcc6c1015147a63a0deff38
-G
-dustin/build.gradle.kts,0/8/081d86d4651bf30acc90d04bd99bbbdce4238f5d
-e
-5dustin/src/main/kotlin/io/dustin/DustinApplication.kt,7/b/7b6bf1a230bac922d7bf8b1ce0ef0cb4f356774f
 y
 Idustin/src/test/kotlin/io/dustin/api/usecase/mugi/WriteMugiUseCaseTest.kt,6/1/6153dbab358d347afeec9fe36b08e8da0fa4e5cb
 u
 Edustin/src/test/kotlin/io/dustin/api/controller/UserControllerTest.kt,b/b/bb718c9a40d9965bc2e8b66f537b0ed04b225221
-q
-Adustin/src/main/kotlin/io/dustin/api/controller/MugiController.kt,f/4/f4be5c6f8eb21f153dfe88a55f3760fe75346718
 u
 Edustin/src/test/kotlin/io/dustin/api/controller/MugiControllerTest.kt,2/7/27e74ed0886d529f26019198d270d5966711f9e6

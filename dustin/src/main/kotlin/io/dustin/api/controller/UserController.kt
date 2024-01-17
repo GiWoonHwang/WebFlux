@@ -10,11 +10,8 @@ import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.http.HttpStatus
 import org.springframework.util.MultiValueMap
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Mono
 
-@Validated
 @RestController
 @RequestMapping("/api/v1/users")
 class UserController(
@@ -23,26 +20,29 @@ class UserController(
 ) {
 
     @GetMapping("/query/{queryCondition}")
-    fun fetchUsers(@Valid queryPage: QueryPage,
-                       @MatrixVariable(pathVar = "queryCondition", required = false) matrixVariable: MultiValueMap<String, Any>): Mono<Page<User>> {
+    @ResponseStatus(HttpStatus.OK)
+    suspend fun fetchUsers(
+        @Valid queryPage: QueryPage,
+        @MatrixVariable(pathVar = "queryCondition", required = false) matrixVariable: MultiValueMap<String, Any>
+    ): Page<User> {
         return readUserUseCase.usersByQuery(queryPage, matrixVariable)
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun fetchUsers(@PathVariable("id") id: Long): Mono<User> {
+    suspend fun fetchUsers(@PathVariable("id") id: Long): User {
         return readUserUseCase.userById(id)
     }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    fun createUser(@RequestBody @Valid command: CreateUser): Mono<User> {
+    suspend fun createUser(@RequestBody @Valid command: CreateUser): User {
         return writeUserUseCase.insert(command)
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun updateUser(@PathVariable("id") id: Long, @RequestBody command: UpdateUser): Mono<User> {
+    suspend fun updateUser(@PathVariable("id") id: Long, @RequestBody @Valid command: UpdateUser): User {
         return writeUserUseCase.update(id, command)
     }
 
