@@ -5,4 +5,5 @@ enum class Job {
     JUNSA,
     MABUPSA,
     GUNGSU,
+    ETC
 }

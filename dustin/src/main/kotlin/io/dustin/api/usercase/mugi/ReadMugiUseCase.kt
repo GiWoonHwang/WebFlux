@@ -2,17 +2,18 @@ package io.dustin.api.usercase.mugi
 
 import io.dustin.common.builder.createNativeSortLimitClause
 import io.dustin.common.builder.createNativeWhereClause
+import io.dustin.common.extensions.countZipWith
+import io.dustin.common.extensions.map
 import io.dustin.common.model.request.QueryPage
-import io.dustin.domain.mugi.model.Mugi
+import io.dustin.domain.mugi.model.entity.Mugi
 import io.dustin.domain.mugi.service.ReadMugiService
 import io.dustin.domain.user.service.ReadUserService
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.toList
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.stereotype.Service
 import org.springframework.util.MultiValueMap
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 @Service
 class ReadMugiUseCase(
@@ -24,12 +25,15 @@ class ReadMugiUseCase(
         return read.mugiByIdOrThrow(id)
     }
 
+    /**
+     * 이부분 이해 안됨
+     */
     suspend fun mugiByUserId(queryPage: QueryPage, userId: Long): Page<Mugi> {
         val user = readUser.userByIdOrThrow(userId)
         return read.mugiByUserId(user.id!!, queryPage.fromPageable())
             .toList()
-            .countZipWith(read.mugiCountByUSer(userId))
-            .map { (records, count) -> PageImpl(records.toList(), queryPage.fromPageable(), count) }
+            .countZipWith(read.mugiCountByUser(userId))
+            .map { (users, count) -> PageImpl(users.toList(), queryPage.fromPageable(), count) }
     }
 
     fun allMugis(queryPage: QueryPage, matrixVariable: MultiValueMap<String, Any>): Flow<Mugi> {

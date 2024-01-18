@@ -7,7 +7,6 @@ import org.springframework.web.reactive.config.EnableWebFlux
 @SpringBootApplication
 @EnableWebFlux
 class DustinApplication
-
 fun main(args: Array<String>) {
 	runApplication<DustinApplication>(*args)
 }

@@ -1,7 +1,7 @@
 package io.dustin.domain.mugi.service
 
 import io.dustin.common.exception.BadParameterException
-import io.dustin.domain.mugi.model.Mugi
+import io.dustin.domain.mugi.model.entity.Mugi
 import io.dustin.domain.mugi.model.code.MugiFormat
 import io.dustin.domain.mugi.model.code.ReleasedType
 import org.assertj.core.api.Assertions.assertThat

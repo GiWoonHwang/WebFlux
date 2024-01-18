@@ -2,12 +2,11 @@ package io.dustin.api.usercase.user
 
 import io.dustin.api.usercase.user.model.CreateUser
 import io.dustin.api.usercase.user.model.UpdateUser
-import io.dustin.common.exception.BadParameterException
-import io.dustin.domain.user.model.User
+import io.dustin.domain.user.model.code.Job
+import io.dustin.domain.user.model.entity.User
 import io.dustin.domain.user.service.ReadUserService
 import io.dustin.domain.user.service.WriteUserService
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Mono
 
 @Service
 class WriteUserUseCase(
@@ -16,7 +15,7 @@ class WriteUserUseCase(
 ) {
 
     suspend fun insert(command: CreateUser): User {
-        val created = User(name = command.name, job = job.valueOf(command.job))
+        val created = User(name = command.name, job = Job.valueOf(command.job))
         return write.create(created)
     }
 

@@ -2,8 +2,7 @@ package io.dustin.domain.user.service
 
 import io.dustin.DustinApplication
 import io.dustin.api.usercase.user.model.UpdateUser
-import io.dustin.common.transaction.Transaction
-import io.dustin.domain.user.model.User
+import io.dustin.domain.user.model.entity.User
 import io.dustin.domain.user.model.code.Job
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName

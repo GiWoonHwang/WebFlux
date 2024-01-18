@@ -1,9 +1,9 @@
 package io.dustin.common.extensions
 
  /** 파이썬 zip 함수와 유사하다 */
-fun <T, R> Iterable<T>.countZipWith(other: R): Pair<Iterable<T>, R> {
-    return this to other
-}
+ fun <T, R> Iterable<T>.countZipWith(other: R): Pair<Iterable<T>, R> {
+     return this to other
+ }
 
 /**
  * fun main() {

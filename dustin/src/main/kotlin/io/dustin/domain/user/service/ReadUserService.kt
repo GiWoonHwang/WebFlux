@@ -16,16 +16,13 @@ class ReadUserService(
      * 기본적으로 해당 API를 사용할 때 전역으로 처리해야 하는 경우 외에 비지니스 로직내에서 던지지 말아야 하는 경우도 발생할 수 있다.
      */
     fun users(pageable: Pageable) = userRepository.findAllBy(pageable)
-
-    fun userById(id: Long) = userRepository.findById(id)
-
-    fun userByIdOrThrow(id: Long, message: String? = null) = userRepository.findByIdOrThrow(id,message)
-
-    fun totalCount() = userRepository.count()
-
     fun usersByQuery(match: Query) = userRepository.usersByQuery(match)
 
-    fun totalCountByQuery(match: Query) = userRepository.totalCountByQuery(match)
+    suspend fun userById(id: Long) = userRepository.findById(id)
+    suspend fun userByIdOrThrow(id: Long, message: String? = null) = userRepository.findByIdOrThrow(id, message)
+    suspend fun totalCount() = userRepository.count()
+    suspend fun totalCountByQuery(match: Query) = userRepository.totalCountByQuery(match)
+    suspend fun musicianWithRecords(id: Long) = userRepository.userWithMugis(id)
 
 
 }

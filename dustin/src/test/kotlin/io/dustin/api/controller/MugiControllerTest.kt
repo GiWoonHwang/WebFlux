@@ -2,7 +2,7 @@ package io.dustin.api.controller
 
 import io.dustin.api.usercase.mugi.model.CreateMugi
 import io.dustin.api.usercase.mugi.model.UpdateMugi
-import io.dustin.domain.mugi.model.Mugi
+import io.dustin.domain.mugi.model.entity.Mugi
 import io.dustin.domain.mugi.model.code.MugiFormat
 import io.dustin.domain.mugi.model.code.ReleasedType
 import org.junit.jupiter.api.DisplayName

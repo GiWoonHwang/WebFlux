@@ -1,15 +1,16 @@
 package io.dustin.api.usercase.user
 
 import io.dustin.common.builder.createQuery
+import io.dustin.common.extensions.countZipWith
+import io.dustin.common.extensions.map
 import io.dustin.common.model.request.QueryPage
-import io.dustin.domain.user.model.User
+import io.dustin.domain.user.model.entity.User
 import io.dustin.domain.user.service.ReadUserService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.stereotype.Service
 import org.springframework.util.MultiValueMap
-import reactor.core.publisher.Mono
-
+import kotlinx.coroutines.flow.toList
 @Service
 class ReadUserUseCase(
     private val read: ReadUserService,

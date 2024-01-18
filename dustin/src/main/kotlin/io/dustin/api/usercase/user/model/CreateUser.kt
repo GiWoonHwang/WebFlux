@@ -1,5 +1,6 @@
 package io.dustin.api.usercase.user.model
 
+import io.dustin.common.constraint.EnumCheck
 import io.dustin.domain.user.model.code.Job
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -12,5 +13,5 @@ data class CreateUser(
 
     @field:NotNull(message = "직업 정보가 누락 되었습니다.")
     @field:EnumCheck(enumClazz = Job::class, permitNull = true, message = "job 필드는 DOJUK, JUNSA, GUNGSU, MABUPSA 만 가능합니다.")
-    val job: Job?,
+    val job: String,
 )

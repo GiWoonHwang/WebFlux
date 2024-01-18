@@ -1,7 +1,8 @@
 package io.dustin.api.usercase.user.model
 
+import io.dustin.common.constraint.EnumCheck
 import io.dustin.common.exception.BadParameterException
-import io.dustin.domain.user.model.User
+import io.dustin.domain.user.model.entity.User
 import io.dustin.domain.user.model.code.Job
 import org.springframework.data.relational.core.sql.SqlIdentifier
 
@@ -19,7 +20,7 @@ data class UpdateUser(
         }
         job?.let {
             assignments[SqlIdentifier.unquoted("job")] = it
-            user.job = it
+            user.job = Job.valueOf(it.uppercase())
         }
         if(assignments.isEmpty()) {
             throw BadParameterException("업데이트 정보가 누락되었습니다. [name, job] 정보를 확인하세요.")

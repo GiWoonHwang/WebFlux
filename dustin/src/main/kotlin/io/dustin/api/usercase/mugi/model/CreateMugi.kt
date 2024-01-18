@@ -1,5 +1,6 @@
 package io.dustin.api.usercase.mugi.model
 
+import io.dustin.common.constraint.EnumCheck
 import io.dustin.domain.mugi.model.code.ReleasedType
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotNull

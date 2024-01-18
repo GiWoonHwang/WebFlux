@@ -4,6 +4,10 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.reactive.TransactionalOperator
 import org.springframework.transaction.reactive.executeAndAwait
 
+/**
+ * Spring Integration
+ * 코루틴에서 @Transactional을 대신하기 위한 코드
+ */
 @Component
 class Transaction (
     transactionalOperator: TransactionalOperator

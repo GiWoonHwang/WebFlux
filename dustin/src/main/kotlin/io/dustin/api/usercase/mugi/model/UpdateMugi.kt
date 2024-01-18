@@ -1,14 +1,16 @@
 package io.dustin.api.usercase.mugi.model
 
-import io.dustin.domain.mugi.model.Mugi
+import io.dustin.common.constraint.EnumCheck
+import io.dustin.domain.mugi.model.entity.Mugi
 import io.dustin.domain.mugi.model.code.ReleasedType
 import org.springframework.data.relational.core.sql.SqlIdentifier
+
 
 data class UpdateMugi(
     val name: String? = null,
     var label: String? = null,
     @field:EnumCheck(enumClazz = ReleasedType::class, permitNull = true, message = "releasedType 필드는 ADAE, GUM, JIPANGI, HWAL만  가능합니다.")
-    var releasedType: String? = null,
+    val releasedType: String? = null,
     var releasedYear: Int? = null,
     var format: String? = null,
 ) {
@@ -23,11 +25,11 @@ data class UpdateMugi(
             mugi.label = it
         }
         releasedType?.let {
-            assignments[SqlIdentifier.unquoted("released_type")] = it
-            mugi.releasedType = it
+            assignments[SqlIdentifier.unquoted("releasedType")] = it
+            mugi.releasedType = ReleasedType.valueOf(it.uppercase())
         }
         releasedYear?.let {
-            assignments[SqlIdentifier.unquoted("released_year")] = it
+            assignments[SqlIdentifier.unquoted("releasedYear")] = it
             mugi.releasedYear = it
         }
         format?.let {

@@ -4,7 +4,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 /**
- * 클래스별로 로거 설정할 수 있도록 Inline, reified를 통해 제너릭하게 처리한다.
- * @return Logger
+ * reified 통해 T의 타입을 알 수 있다. -> getLogger (T::class.java) 을 받을 수 있게 된다.
  */
 inline fun <reified T> logger(): Logger = LoggerFactory.getLogger(T::class.java)

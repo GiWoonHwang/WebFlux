@@ -1,7 +1,9 @@
 
     2024/01/17
     컨트롤러 작업
-
+    
+    01/18
+    usecase, common, service 작업
     
 
 

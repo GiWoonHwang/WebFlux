@@ -1,13 +1,13 @@
 package io.dustin.domain.user.repository
 
-import io.dustin.domain.user.model.User
-import io.dustin.domain.user.model.custom.CustomUserRepository
+import io.dustin.common.repository.BaseRepository
+import io.dustin.domain.user.model.entity.User
+import io.dustin.domain.user.repository.custom.CustomUserRepository
+import kotlinx.coroutines.flow.Flow
 import org.springframework.data.domain.Pageable
-import org.springframework.data.r2dbc.repository.R2dbcRepository
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
-interface UserRepository: R2dbcRepository<User, Long>, CustomUserRepository {
-    override fun findById(id: Long): Mono<User>
-    fun findAllBy(pageable: Pageable): Flux<User>
+
+interface UserRepository: BaseRepository<User, Long>, CustomUserRepository {
+    override suspend fun findById(id: Long): User?
+    fun findAllBy(pageable: Pageable): Flow<User>
 }

@@ -1,8 +1,8 @@
 package io.dustin.domain.mugi.mapper
 
-import io.dustin.domain.mugi.model.Mugi
+import io.dustin.domain.mugi.model.entity.Mugi
 import io.dustin.domain.mugi.model.code.ReleasedType
-import io.dustin.domain.user.model.User
+import io.dustin.domain.user.model.entity.User
 import io.dustin.domain.user.model.code.Job
 import io.r2dbc.spi.Row
 import io.r2dbc.spi.RowMetadata

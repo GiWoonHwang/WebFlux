@@ -5,7 +5,7 @@ import io.dustin.api.usercase.user.model.UpdateUser
 import io.dustin.api.usercase.user.ReadUserUseCase
 import io.dustin.api.usercase.user.WriteUserUseCase
 import io.dustin.common.model.request.QueryPage
-import io.dustin.domain.user.model.User
+import io.dustin.domain.user.model.entity.User
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.http.HttpStatus

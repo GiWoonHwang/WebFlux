@@ -5,7 +5,7 @@ import io.dustin.api.usercase.mugi.WriteMugiUseCase
 import io.dustin.api.usercase.mugi.model.CreateMugi
 import io.dustin.api.usercase.mugi.model.UpdateMugi
 import io.dustin.common.model.request.QueryPage
-import io.dustin.domain.mugi.model.Mugi
+import io.dustin.domain.mugi.model.entity.Mugi
 import jakarta.validation.Valid
 import kotlinx.coroutines.flow.Flow
 import org.springframework.data.domain.Page
