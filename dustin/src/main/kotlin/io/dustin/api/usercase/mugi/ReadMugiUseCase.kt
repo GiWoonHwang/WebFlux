@@ -6,6 +6,7 @@ import io.dustin.common.model.request.QueryPage
 import io.dustin.domain.mugi.model.Mugi
 import io.dustin.domain.mugi.service.ReadMugiService
 import io.dustin.domain.user.service.ReadUserService
+import kotlinx.coroutines.flow.Flow
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.stereotype.Service
@@ -19,28 +20,21 @@ class ReadMugiUseCase(
     private val readUser: ReadUserService,
 ) {
 
-    fun mugiById(id: Long): Mono<Mugi> {
+    suspend fun mugiById(id: Long): Mugi {
         return read.mugiByIdOrThrow(id)
     }
 
-    fun recordByMusicianId(queryPage: QueryPage, userId: Long): Mono<Page<Mugi>> {
+    suspend fun mugiByUserId(queryPage: QueryPage, userId: Long): Page<Mugi> {
         val user = readUser.userByIdOrThrow(userId)
-        return user.flatMapMany { user ->
-            read.mugiByUserId(userId, queryPage.fromPageable())
-                .map {
-                    it.user = user
-                    it
-                }
-        }
-            .collectList()
-            .zipWith(read.mugiCountByUser(userId))
-            .map { tuple -> PageImpl(tuple.t1, queryPage.fromPageable(), tuple.t2) }
-
+        return read.mugiByUserId(user.id!!, queryPage.fromPageable())
+            .toList()
+            .countZipWith(read.mugiCountByUSer(userId))
+            .map { (records, count) -> PageImpl(records.toList(), queryPage.fromPageable(), count) }
     }
 
-    fun allMugis(queryPage: QueryPage, matrixVariable: MultiValueMap<String, Any>): Flux<Mugi> {
+    fun allMugis(queryPage: QueryPage, matrixVariable: MultiValueMap<String, Any>): Flow<Mugi> {
         val prefix = "mugi"
-        val clazz = Record::class
+        val clazz = Mugi::class
         val whereClause = createNativeWhereClause(prefix, clazz, matrixVariable)
         val (orderSql, limitSql) = createNativeSortLimitClause(prefix, clazz, queryPage)
         return read.allMugis(whereClause = whereClause, orderClause = orderSql, limitClause = limitSql)

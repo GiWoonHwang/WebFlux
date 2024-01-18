@@ -15,22 +15,16 @@ class WriteUserUseCase(
     private val write: WriteUserService,
 ) {
 
-    fun insert(command: CreateUser): Mono<User> {
-        val created = User(name = command.name, job = command.job)
+    suspend fun insert(command: CreateUser): User {
+        val created = User(name = command.name, job = job.valueOf(command.job))
         return write.create(created)
     }
 
-    /**
-     * flatMap을 사용하지 않는다면 이 결과는 Mono<Mono<Musician>>이라는 요상한 형식이 된다.
-     */
-    fun update(id: Long, command: UpdateUser): Mono<User> {
-        return read.userByIdOrThrow(id).flatMap { user ->
-            val (user, assignments) = command.createAssignments(user)
-            write.update(user, assignments)
-        }.onErrorResume {
-            Mono.error(BadParameterException(it.message))
-        }
-            .then(read.userById(id))
+    suspend fun update(id: Long, command: UpdateUser): User {
+        val selected = read.userByIdOrThrow(id)
+        val (musician, assignments) = command.createAssignments(selected)
+        write.update(musician, assignments)
+        return read.userById(id)!!
     }
 
 }

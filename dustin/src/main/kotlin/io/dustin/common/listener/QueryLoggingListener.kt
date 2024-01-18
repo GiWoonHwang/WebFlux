@@ -36,3 +36,4 @@ class QueryLoggingListener: ProxyExecutionListener {
         log.info(formatter.format(execInfo))
     }
 }
+

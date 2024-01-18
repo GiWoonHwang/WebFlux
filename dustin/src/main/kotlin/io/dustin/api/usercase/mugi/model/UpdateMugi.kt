@@ -7,7 +7,8 @@ import org.springframework.data.relational.core.sql.SqlIdentifier
 data class UpdateMugi(
     val name: String? = null,
     var label: String? = null,
-    var releasedType: ReleasedType? = null,
+    @field:EnumCheck(enumClazz = ReleasedType::class, permitNull = true, message = "releasedType 필드는 ADAE, GUM, JIPANGI, HWAL만  가능합니다.")
+    var releasedType: String? = null,
     var releasedYear: Int? = null,
     var format: String? = null,
 ) {

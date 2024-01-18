@@ -17,7 +17,8 @@ data class CreateMugi(
     var label: String,
 
     @field:NotNull(message = "무기 종류 정보가 누락되었습니다.")
-    var releasedType: ReleasedType?,
+    @field:EnumCheck(enumClazz = ReleasedType::class, message = "releasedType 필드는 SINGLE, FULL, EP, OST, COMPILATION, LIVE, MIXTAPE 만 가능합니다.")
+    var releasedType: String,
 
     @field:Min(0, message = "무기 제작일 누락되었습니다.")
     var releasedYear: Int,

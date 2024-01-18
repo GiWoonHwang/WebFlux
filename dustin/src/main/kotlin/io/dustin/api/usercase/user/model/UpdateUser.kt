@@ -7,11 +7,10 @@ import org.springframework.data.relational.core.sql.SqlIdentifier
 
 data class UpdateUser(
     val name: String?,
-    val job: Job?,
+    @field:EnumCheck(enumClazz = Job::class, permitNull = true, message = "job 필드는 DOJUK, JUNSA, GUNGSU, MABUPSA 만 가능합니다.")
+    val job: String?,
 ) {
-    /**
-     * 데이터 베이스에 정보가 있으면 MutableMap에 값을 담는다.(정확히 이해 못함)
-     */
+
     fun createAssignments(user: User): Pair<User, MutableMap<SqlIdentifier, Any>> {
         val assignments = mutableMapOf<SqlIdentifier, Any>()
         name?.let {
