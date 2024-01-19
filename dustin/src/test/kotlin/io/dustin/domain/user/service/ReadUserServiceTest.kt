@@ -1,116 +1,122 @@
 package io.dustin.domain.user.service
 
-import io.dustin.DustinApplication
+import io.dustin.common.utils.notFound
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.query.Criteria.where
 import org.springframework.data.relational.core.query.Query.query
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
-import reactor.test.StepVerifier
+import org.springframework.data.relational.core.query.isEqual
 
-@SpringBootTest(classes = [DustinApplication::class])
+@SpringBootTest
 class ReadUserServiceTest @Autowired constructor(
     private val read: ReadUserService,
 ) {
 
     @Test
     @DisplayName("fetch user by id")
-    fun userByIdTEST() {
+    fun userByIdTEST() = runTest{
         // given
-        val id = 3L
+        val id = 1L
 
         // when
         val selected = read.userById(id)
 
         // then
-        selected.`as`(StepVerifier::create)
-            .assertNext {
-                assertThat(it.name).isEqualTo("dustin hwang ")
-            }
-            .verifyComplete()
+        assertThat(selected!!.name).isEqualTo("한동근")
     }
 
     @Test
     @DisplayName("fetch user by id or throw")
-    fun userByIdOrThrowTEST() {
+    fun userByIdOrThrowTEST() = runTest{
         // given
-        //val id = 1L
-        val id = 3L
+        val id = 1L
+//        val id = 1111L
 
         // when
         val selected = read.userByIdOrThrow(id)
 
         // then
-        selected.`as`(StepVerifier::create)
-            .assertNext {
-                assertThat(it.name).isEqualTo("dustin hwang ")
-            }
-            .verifyComplete()
+        assertThat(selected!!.name).isEqualTo("한동근")
+
+    }
+
+    @Test
+    @DisplayName("fetch users pagination")
+    fun usersTEST() = runTest{
+        // given
+        val pageable = PageRequest.of(0, 3)
+
+        // when
+        val musicians = read.users(pageable)
+            .toList()
+            .map { it.name }
+        // then
+        assertThat(musicians.size).isEqualTo(3)
+        assertThat(musicians[0]).isEqualTo("한동근")
     }
 
     @Test
     @DisplayName("total user count test")
-    fun totalCountTEST() {
+    fun totalCountTEST() = runTest{
         // when
-        val count: Mono<Long> = read.totalCount()
+        val count = read.totalCount()
 
         // then
-        count.`as`(StepVerifier::create)
-            .assertNext {
-                assertThat(it).isEqualTo(1)
-            }
-            .verifyComplete()
+        assertThat(count).isEqualTo(4)
     }
-
 
     @Test
     @DisplayName("users list by query test")
-    fun usersByQueryTEST() {
+    fun usersByQueryTEST() = runTest{
 
         val list = emptyList<Criteria>()
 
         // given
-        val match = query(Criteria.from(list))
+        val match = query(Criteria.from(list)).limit(2).offset(0)
 
         // when
-        val musicians: Flux<String> = read.usersByQuery(
-            // page 0, size 2
-            match.limit(2)
-                .offset(0)
-        )
-            .map {
-                it.name
-            }
+        val musicians: List<String> = read.usersByQuery(match)
+            .toList()
+            .map { it.name }
 
         // then
-        musicians.`as`(StepVerifier::create)
-            .expectNext("dustin hwang ")
-            //.expectNext("John Coltrane")
-            .verifyComplete()
+        assertThat(musicians.size).isEqualTo(2)
 
     }
 
     @Test
     @DisplayName("total user count by query test")
-    fun totalCountByQueryTEST() {
+    fun totalCountByQueryTEST() = runTest{
         // given
-        val match = query(where("name").like("%dustin%"))
+        val match = query(where("job").isEqual("DOJUK"))
 
         // when
-        val count: Mono<Long> = read.totalCountByQuery(match)
+        val count = read.totalCountByQuery(match)
 
         // then
-        count.`as`(StepVerifier::create)
-            .assertNext {
-                // 현재 1개의 row가 있다.
-                assertThat(it).isEqualTo(1)
-            }
-            .verifyComplete()
+        assertThat(count).isEqualTo(3)
+    }
+
+    @Test
+    @DisplayName("user with mugis test")
+    fun userWithMugisTEST() = runTest{
+        // given
+        val id = 1L
+
+        // when
+        val user = read.userWithMugis(id) ?: notFound()
+
+        // then
+        assertThat(user.name).isEqualTo("한동근")
+        assertThat(user.mugis!!.size).isEqualTo(4)
+
     }
 
 }

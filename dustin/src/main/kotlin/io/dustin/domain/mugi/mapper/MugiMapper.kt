@@ -14,8 +14,8 @@ import java.util.function.BiFunction
 class MugiMapper: BiFunction<Row, RowMetadata, Mugi> {
     override fun apply(row: Row, rowMetadata: RowMetadata): Mugi {
         val user = User(
-            name = row.get("musicianName", String::class.java)!!,
-            job = Job.valueOf(row.get("genre", String::class.java)!!),
+            name = row.get("userName", String::class.java)!!,
+            job = Job.valueOf(row.get("job", String::class.java)!!),
             createdAt = row.get("mCreatedAt", LocalDateTime::class.java),
             updatedAt = row.get("mUpdatedAt", LocalDateTime::class.java),
         )
@@ -23,7 +23,7 @@ class MugiMapper: BiFunction<Row, RowMetadata, Mugi> {
         val mugi = Mugi(
             id = row.get("id", Long::class.javaObjectType)!!,
             userId = row.get("user_id", Long::class.javaObjectType)!!,
-            name = row.get("title", String::class.java),
+            name = row.get("name", String::class.java),
             label = row.get("label", String::class.java),
             releasedType = ReleasedType.valueOf(row.get("released_type", String::class.java)!!),
             releasedYear = row.get("released_year", Int::class.javaObjectType)!!,

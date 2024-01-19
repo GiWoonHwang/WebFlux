@@ -1,11 +1,13 @@
 package io.dustin.domain.mugi.service
+
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
-import reactor.test.StepVerifier
 
 @SpringBootTest
 class ReadMugiServiceTest @Autowired constructor(
@@ -14,42 +16,36 @@ class ReadMugiServiceTest @Autowired constructor(
 
     @Test
     @DisplayName("mugi by id test")
-    fun mugiByIdTEST() {
+    fun mugiByIdTEST() = runTest {
         // given
-        //val id = 2L
         val id = 1L
 
         // when
-        val mono = read.mugiByIdOrThrow(id)
+        val mugi = read.mugiByIdOrThrow(id)
 
         // then
-        mono.`as`(StepVerifier::create)
-            .assertNext {
-                assertThat(it.name).isEqualTo("Nows The Time")
-            }
-            .verifyComplete()
+        assertThat(mugi.name).isEqualTo("test")
     }
 
     @Test
     @DisplayName("mugi by user id test")
-    fun mugiByUserIdTEST() {
+    fun mugiByUserIdTEST() = runTest {
         // given
-        //val id = 2L
         val userId = 1L
 
         // when
-        val flux = read.mugiByUserId(userId, PageRequest.of(0, 1))
+        val titles = read.mugiByUserId(userId, PageRequest.of(0, 10))
+            .toList()
             .map { it.name }
 
         // then
-        flux.`as`(StepVerifier::create)
-            .expectNext("Nows The Time")
-            .verifyComplete()
+        assertThat(titles.size).isEqualTo(4)
+        assertThat(titles[0]).isEqualTo("test")
     }
 
     @Test
     @DisplayName("mugi Count by user Count test")
-    fun mugiByUserCountTEST() {
+    fun mugiByUserCountTEST() = runTest {
         // given
         //val id = 2L
         val userId = 1L
@@ -58,24 +54,39 @@ class ReadMugiServiceTest @Autowired constructor(
         val count = read.mugiCountByUser(userId)
 
         // then
-        count.`as`(StepVerifier::create)
-            .expectNext(2)
-            .verifyComplete()
+        assertThat(count).isEqualTo(4)
     }
 
     @Test
-    @DisplayName("mugis by converter test")
-    fun mugisTEST() {
+    @DisplayName("allMugis test")
+    fun allMugisTEST() = runTest {
+        // given
+        val whereClause = "AND mugi.user_id = 1"
+        val orderClause = "ORDER BY mugi.released_year DESC"
+        val limitClause = "LIMIT 10"
+
+        // when
+        val recordTitle = read.allMugis(whereClause, orderClause, limitClause)
+            .toList()
+            .map { it.name }
+            .first()
+
+        // then
+        assertThat(recordTitle).isEqualTo("Highlander")
+    }
+
+    @Test
+    @DisplayName("mugis test")
+    fun mugisTEST() = runTest {
         // given
 
         // when
-        val flux = read.mugis().map { it.user?.name }.take(1)
-        println("flux    " + flux)
-
+        val mugiName = read.mugis()
+            .toList()
+            .map { it.name }
+            .first()
         // then
-        flux.`as`(StepVerifier::create)
-            .expectNext("dustin")
-            .verifyComplete()
+        assertThat(mugiName).isEqualTo("Highlander")
     }
 
 }

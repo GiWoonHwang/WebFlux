@@ -22,7 +22,7 @@ class ReadUserService(
     suspend fun userByIdOrThrow(id: Long, message: String? = null) = userRepository.findByIdOrThrow(id, message)
     suspend fun totalCount() = userRepository.count()
     suspend fun totalCountByQuery(match: Query) = userRepository.totalCountByQuery(match)
-    suspend fun musicianWithRecords(id: Long) = userRepository.userWithMugis(id)
+    suspend fun userWithMugis(id: Long) = userRepository.userWithMugis(id)
 
 
 }

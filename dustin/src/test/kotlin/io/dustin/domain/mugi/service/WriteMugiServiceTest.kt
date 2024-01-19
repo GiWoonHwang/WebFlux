@@ -1,9 +1,10 @@
 package io.dustin.domain.mugi.service
 
 import io.dustin.common.exception.BadParameterException
-import io.dustin.domain.mugi.model.entity.Mugi
 import io.dustin.domain.mugi.model.code.MugiFormat
 import io.dustin.domain.mugi.model.code.ReleasedType
+import io.dustin.domain.mugi.model.entity.Mugi
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -12,7 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.relational.core.sql.SqlIdentifier
 import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener
-import reactor.test.StepVerifier
+
+
 
 @SpringBootTest
 @TestExecutionListeners(
@@ -26,60 +28,48 @@ class WriteMugiServiceTest @Autowired constructor(
 
     @Test
     @DisplayName("mugi create test")
-    fun createMugiTEST() {
+    fun createMugiTEST() = runTest {
         // given
-        val formats = listOf(MugiFormat.ADAE, MugiFormat.GUM).joinToString(separator = ",") { it.name }
+        val formats = listOf(MugiFormat.GUM, MugiFormat.ADAE).joinToString(separator = ",") { it.name }
         val createdMugi = Mugi(
             userId = 1,
-            name = "Nows The Time",
-            label = "Verve",
+            name = "아케인셰이드 대거",
+            label = "황기훈님의",
             format = formats,
-            releasedType = ReleasedType.JAK,
-            releasedYear = 1957,
+            releasedType = ReleasedType.GUMAE,
+            releasedYear = 2022,
         )
 
         // when
-        val mono = write.create(createdMugi)
+        val created = write.create(createdMugi)
 
         // then
-        mono.`as`(StepVerifier::create)
-            .assertNext {
-                assertThat(it.id).isGreaterThan(0L)
-            }
-            .verifyComplete()
+        assertThat(created.id).isGreaterThan(0L)
     }
 
     @Test
     @DisplayName("mugi update using builder test")
-    fun updateMugiTEST() {
+    fun updateMugiTEST() = runTest {
         // given
-        val id = 1L
-        val name = "Now's The Time"
-
         val target = read.mugiByIdOrThrow(1)
-        //println("target   "+target)
+
+        val id = target.id!!
+        val name = "test"
 
         val assignments = mutableMapOf<SqlIdentifier, Any>()
         name?.let {
             assignments[SqlIdentifier.unquoted("name")] = it
         }
         if(assignments.isEmpty()) {
-            throw BadParameterException("업데이트 정보가 누락되었습니다. [name, job] 정보를 확인하세요.")
+            throw BadParameterException("업데이트 정보가 누락되었습니다. [name, genre] 정보를 확인하세요.")
         }
 
         // when
-        val updated = target.flatMap {
-            write.update(it, assignments)
-        }.then(read.mugiById(1))
-
-        //println("updated   "+updated)
+        write.update(target, assignments)
+        val updated = read.mugiById(target.id!!)!!
 
         // then
-        updated.`as`(StepVerifier::create)
-            .assertNext {
-                assertThat(it.name).isEqualTo(name)
-            }
-            .verifyComplete()
+        assertThat(updated.name).isEqualTo(name)
     }
 
 }

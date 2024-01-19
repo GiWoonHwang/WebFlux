@@ -2,19 +2,21 @@ package io.dustin.api.usercase.user.model
 
 import io.dustin.common.constraint.EnumCheck
 import io.dustin.common.exception.BadParameterException
+import io.dustin.common.utils.isParamBlankThrow
 import io.dustin.domain.user.model.entity.User
 import io.dustin.domain.user.model.code.Job
 import org.springframework.data.relational.core.sql.SqlIdentifier
 
 data class UpdateUser(
-    val name: String?,
+    val name: String? = null,
     @field:EnumCheck(enumClazz = Job::class, permitNull = true, message = "job 필드는 DOJUK, JUNSA, GUNGSU, MABUPSA 만 가능합니다.")
-    val job: String?,
+    val job: String? = null,
 ) {
 
     fun createAssignments(user: User): Pair<User, MutableMap<SqlIdentifier, Any>> {
         val assignments = mutableMapOf<SqlIdentifier, Any>()
         name?.let {
+            isParamBlankThrow(it)
             assignments[SqlIdentifier.unquoted("name")] = it
             user.name = it
         }

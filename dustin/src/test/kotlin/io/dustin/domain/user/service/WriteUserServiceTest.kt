@@ -1,24 +1,17 @@
 package io.dustin.domain.user.service
 
-import io.dustin.DustinApplication
 import io.dustin.api.usercase.user.model.UpdateUser
-import io.dustin.domain.user.model.entity.User
+import io.dustin.common.transaction.Transaction
 import io.dustin.domain.user.model.code.Job
+import io.dustin.domain.user.model.entity.User
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.TestExecutionListeners
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener
-import reactor.test.StepVerifier
 
-//@SpringBootTest
-@SpringBootTest(classes = [DustinApplication::class])
-@TestExecutionListeners(
-    listeners = [TransactionalTestExecutionListener::class],
-    mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
-)
+@SpringBootTest
 class WriteUserServiceTest @Autowired constructor(
     private val read: ReadUserService,
     private val write: WriteUserService,
@@ -26,47 +19,39 @@ class WriteUserServiceTest @Autowired constructor(
 
     @Test
     @DisplayName("user create test")
-    fun createUserTEST() {
+    fun createUserTEST() = runTest {
         // given
-        val createdUser = User(name = "dustin2", job = Job.Dojuk)
+        val createdUser = User(name = "dustin", job = Job.DOJUK)
 
         // when
-        val mono = write.create(createdUser)
+        val user = Transaction.withRollback(createdUser) {
+            write.create(it)
+        }
 
         // then
-//        mono.`as`(Transaction::withRollback)
-//            .`as`(StepVerifier::create)
-//            .assertNext {
-//                assertThat(it.id).isGreaterThan(0L)
-//            }
-//            .verifyComplete()
+        assertThat(user.id).isGreaterThan(0)
     }
 
-    /**
-     *
-     */
     @Test
     @DisplayName("user update using builder test")
-    fun updateTemplateUserTEST() {
+    fun updateUserTEST() = runTest {
         // given
-        val id = 3L
+        val id = 15L
 
-        val command = UpdateUser(name = "dustin hwang ", job = Job.Junsa)
-        //val command = UpdateUser(null, null)
+        val command = UpdateUser(name = "서현식", job = "DOJUK")
 
-        val target = read.userByIdOrThrow(3)
+        val target = read.userByIdOrThrow(1)
+
+        val (user, assignments) = command.createAssignments(target)
 
         // when
-        val updated = target.flatMap {
-            val (user, assignments) = command.createAssignments(it)
+        val update = Transaction.withRollback(id) {
             write.update(user, assignments)
-        }.then(read.userById(3))
+            read.userById(id)!!
+        }
 
         // then
-        updated.`as`(StepVerifier::create)
-            .assertNext {
-                assertThat(it.job).isEqualTo(Job.Junsa)
-            }
-            .verifyComplete()
+        assertThat(update.job).isEqualTo(Job.DOJUK)
     }
+
 }

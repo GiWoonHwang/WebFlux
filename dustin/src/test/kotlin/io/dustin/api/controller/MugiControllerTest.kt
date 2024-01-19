@@ -30,7 +30,7 @@ class MugiControllerTest @Autowired constructor(
             name = "Highlander",
             label = "dustin",
             format = formats,
-            releasedType = ReleasedType.JAK,
+            releasedType = ReleasedType.JAK.name,
             releasedYear = 2020,
         )
 
@@ -87,7 +87,7 @@ class MugiControllerTest @Autowired constructor(
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody()
             // then
-            .jsonPath("$.name").isEqualTo("Bird At St. Nick's")
+            .jsonPath("$.name").isEqualTo("test")
 
     }
 

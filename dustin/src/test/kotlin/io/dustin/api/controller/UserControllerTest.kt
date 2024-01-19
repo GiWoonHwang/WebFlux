@@ -11,31 +11,25 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
-
 @SpringBootTest
 @AutoConfigureWebTestClient
 class UserControllerTest @Autowired constructor(
     private val webTestClient: WebTestClient,
 ) {
 
+    // 이거 안됨 ,,,
     @Test
     @DisplayName("user create test")
-    fun createMusicianTEST() {
+    fun createUserTEST() {
         // given
-        val createUser = CreateUser(name = "dustin", job = Job.Dojuk)
+        val createUser = CreateUser(name = "dustin", job = "JUNSA")
 
-        /**
-         * 비동기적으로 요청하는 non-blocking 처리 방식
-         * 요청을 보내고 응답을 받을 때까지 대기하지 않기 때문에 처리 속도가 빠름
-         * 비동기 처리 방식으로 인해 대용량 처리를 할 때 용이함
-         * WebTestClient를 주입받기 위해서는 위 코드에서 볼 수 있듯이 @AutoConfigureWebTestClient설정을 해주면 된다.
-         */
         // when
         webTestClient.post()
             .uri("/api/v1/users")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .body(Mono.just(createUser), CreateUser::class.java::class.java)
+            .body(Mono.just(createUser), CreateUser::class.java)
             .exchange()
             .expectStatus().isCreated
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
@@ -48,27 +42,27 @@ class UserControllerTest @Autowired constructor(
     @DisplayName("user update test")
     fun updateUserTEST() {
         // given
-        val update = UpdateUser(name = null, job = Job.Junsa)
+        val update = UpdateUser(job = "DOJUK")
 
         // when
         webTestClient.patch()
-            .uri("/api/v1/users/5")
+            .uri("/api/v1/users/1")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .body(Mono.just(update), UpdateUser::class.java::class.java)
+            .body(Mono.just(update), UpdateUser::class.java)
             .exchange()
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody()
             // then
-            .jsonPath("$.job").isEqualTo("Junsa")
+            .jsonPath("$.job").isEqualTo("DOJUK")
     }
 
     @Test
     @DisplayName("fetchUser test")
     fun fetchUserTEST() {
         // given
-        val id = 5L
+        val id = 1L
 
         // when
         webTestClient.get()
@@ -79,10 +73,9 @@ class UserControllerTest @Autowired constructor(
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody()
             // then
-            .jsonPath("$.name").isEqualTo("dustin")
+            .jsonPath("$.name").isEqualTo("한동근")
 
     }
-
 
     @Test
     @DisplayName("fetchUsers adjust Matrix Variable test")
@@ -93,15 +86,30 @@ class UserControllerTest @Autowired constructor(
         val size = 10
 
         // when
-        webTestClient.get()
-            .uri("/api/v1/users/query/search;name=like,dustin?page=$page&size=$size")
+//        webTestClient.get()
+//            .uri("/api/v1/users/query/search;name=like,lest?page=$page&size=$size")
+//            .accept(MediaType.APPLICATION_JSON)
+//            .exchange()
+//            .expectStatus().isOk
+//            .expectHeader().contentType(MediaType.APPLICATION_JSON)
+//            .expectBody()
+//            // then
+//            .jsonPath("$.content[0].name").isEqualTo("한동근")
+
+        // when
+        val responseSpec = webTestClient.get()
+            .uri("/api/v1/users/query/search;name=like,근?page=$page&size=$size")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody()
-            // then
-            .jsonPath("$.content[0].name").isEqualTo("dustin hwang ")
+
+        // then
+        val responseBody = responseSpec.returnResult().responseBody
+        println("Response Body: ${String(responseBody!!)}")
+
+        responseSpec.jsonPath("$.content[0].name").isEqualTo("한동근")
 
     }
 

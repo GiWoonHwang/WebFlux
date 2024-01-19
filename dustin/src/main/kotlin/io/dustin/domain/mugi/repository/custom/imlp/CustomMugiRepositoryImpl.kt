@@ -28,7 +28,7 @@ class CustomMugiRepositoryImpl(
     override fun findAllMugis(whereClause: String, orderClause: String, limitClause: String): Flow<Mugi> {
         var sql = """
             SELECT user.name AS userName,
-                   user.genre,
+                   user.job,
                    user.created_at AS mCreatedAt,
                    user.updated_at AS mUpdatedAt,
                    mugi.*
